@@ -1,0 +1,256 @@
+\documentclass{article}
+\usepackage{ctex}
+\usepackage{pythonhighlight}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{geometry}
+\geometry{left=2cm,right=2cm,top=2.5cm,bottom=2.5cm}
+\usepackage[utf8]{inputenc}
+
+\title{数值计算程序设计作业}
+\author{向~涛}
+\date{July 2021}
+
+\begin{document}
+
+\maketitle
+
+\section{散度定理}
+
+给定区域$\Omega \in \mathbb{R}^d$，记$\partial \Omega$为$\Omega$的边界，$\pmb{n}$为$\partial \Omega$为$\Omega$的单位外法向量，$u$和$v$是标量函数，$\pmb{u}$和$\pmb{v}$是向量函数，利用散度定理证明以下公式成立：
+
+\begin{equation}
+    \int_{\Omega} \nabla u \cdot \pmb{v} d \pmb{x} + \int_{\Omega} u \nabla \cdot\pmb{v} d \pmb{x} 
+    =\int_{\partial\Omega} u \pmb{n} \cdot \pmb{v} d \pmb{x}
+\end{equation}
+
+证明：设$\pmb{F}=u\pmb{v}$，则有
+
+\begin{align*}
+    \nabla \cdot u \pmb{v} = \sum^{d}_{i=1} \dfrac{\partial(uv_i)}{\partial x_i} &= \sum^{d}_{i=1} 
+    \dfrac{\partial u}{\partial x_i} v_i + u \sum^{d}_{i=1}
+    \dfrac{\partial v_i}{\partial x_i}  \\
+    &= \nabla u \cdot  \pmb{v} + u\nabla \cdot \pmb{v} 
+\end{align*}
+
+此时便有：
+
+\begin{equation*}
+    \int_{\partial\Omega}u\pmb{n}\cdot\pmb{v}d\pmb{x} = \int_{\partial\Omega}\pmb{n}\cdot u\pmb{v}d\pmb{x} = \int_{\Omega}\nabla \cdot u \pmb{v}d\pmb{x}=\int_{\Omega} \nabla u \cdot \pmb{v} d \pmb{x} + \int_{\Omega} u \nabla \cdot\pmb{v} d \pmb{x}
+\end{equation*}
+
+\begin{equation}
+    \int_{\Omega}\nabla\times \pmb{u}\cdot \pmb{v} d\pmb{x}-\int_{\Omega} \pmb{u}\cdot\nabla\times \pmb{v} d\pmb{x} =\int_{\partial\Omega}\pmb{n}\times \pmb{u}\cdot \pmb{v} d\pmb{x}
+\end{equation}
+
+证明：根据$\nabla$$\cdot$$\left(\pmb{u}\times \pmb{v}\right)=\nabla\times \pmb{u}\cdot \pmb{v}-\pmb{u}\cdot\nabla \times \pmb{v}$则有\[\int_{\Omega}\nabla\times \pmb{u}\cdot \pmb{v}d\pmb{x}-\int_{\Omega}u\cdot\nabla\times \pmb{v} d\pmb{x}=\int_{\Omega}\nabla\cdot\left(\pmb{u}\times	 \pmb{v}\right)d\pmb{x}\]
+设$F=\pmb{u}\times \pmb{v}$,根据散度定理有
+\[\int_{\Omega}\nabla\cdot \left(\pmb{u}\times \pmb{v}\right)d\pmb{x}=\int_{\partial\Omega}\pmb{u}\times \pmb{v}\cdot \pmb{n}d\pmb{x}\]
+于是便有\[\int_{\Omega}	\nabla\times \pmb{u}\cdot \pmb{x} d\pmb{x}-\int_{\Omega}\pmb{u}\cdot\nabla\times \pmb{v} d\pmb{x}=\int_{\Omega}\left(\pmb{u}\times \pmb{v}\cdot \pmb{n}\right)d\pmb{x}\]
+
+\begin{equation}
+    \int_{\Omega}\nabla\cdot \pmb{u} vd\pmb{x}+\int_{\Omega}u\cdot\nabla vd\pmb{x}=\int_{\partial \Omega}\pmb{n}\cdot \pmb{u}v d\pmb{x}
+\end{equation}
+
+证明：根据散度定理\[\int_{\Omega}\nabla\cdot \pmb{u} vd\pmb{x}+\int_{\Omega}\pmb{u}\cdot\nabla vd\pmb{x}=\int_{\Omega}\nabla\cdot\left(\pmb{u}v\right)=\int_{\partial}\nabla\left(\pmb{u}v\right) d\pmb{x}\]
+于是有\[\int_{\Omega}\nabla\left(\pmb{u}v\right)d\pmb{x}=\int_{\partial \Omega}\pmb{n}\cdot \pmb{u}vd\pmb{x}=\int_{\Omega}\nabla\cdot \pmb{u} vd\pmb{x}+\int_{\Omega}\pmb{u}\cdot\nabla vd\pmb{x}\]
+
+\section{edge2cell}
+
+仿照三角形edge2cell程序编写四边形的edge2cell程序；四边形的edge2cell程序如下：
+
+\begin{python}
+import numpy as np
+from fealpy.mesh import QuadrangleMesh
+import matplotlib.pyplot as plt
+
+
+def arrayprint(name, a):
+    """
+    Note
+    ----
+    打印一个名字为 name 的数组 a，每一行之前加一个行号
+    """
+    print("\n", name + ":")
+    for (i, row) in enumerate(a):
+        print(i, ": ", row)
+
+
+node = np.array([(0, 0), (1, 0), (1, 1), (0, 1)], dtype=np.float)
+cell = np.array([(0, 1, 2, 3)], dtype=np.int)
+mesh = QuadrangleMesh(node, cell)
+mesh.uniform_refine(1)
+
+node = mesh.entity('node')
+cell = mesh.entity('cell')
+
+# 从 cell 出发，构造 edge、edge2cel、cell2edge
+NC = mesh.number_of_cells()
+NEC = 4  # 每个单元有4条边
+localEdge = np.array([
+    [0, 1],  # 局部 0 号边
+    [1, 2],  # 局部 1 号边
+    [2, 3],  # 局部 2 号边
+    [3, 0],  # 局部 3 号边
+], dtype=np.int_)  # (4, 2)
+# （NC, 4)---> (NC, 4, 2) --> (4*NC, 2)
+totalEdge = cell[:, localEdge].reshape(-1, 2)
+stotalEdge = np.sort(totalEdge, axis=-1)
+
+"""
+这里对python的np.unique函数作说明：
+1.a = np.unique(A)
+对于一维数组或者列表，unique函数去除其中重复的元素，并按元素由大到小返回一个新的无元素重复的元组或者列表
+2.c,s=np.unique(b,return_index=True)
+return_index=True表示返回新列表元素在旧列表中的位置，并以列表形式储存在s中。
+3.a, s,p = np.unique(A, return_index=True, return_inverse=True)
+return_inverse=True 表示返回旧列表元素在新列表中的位置，并以列表形式储存在p中
+"""
+sedge, i0, j = np.unique(stotalEdge,
+                         axis=0,
+                         return_index=True,
+                         return_inverse=True)
+
+i1 = np.zeros_like(i0)
+i1[j] = range(NEC * NC)  # 取重复元素的后者
+
+edge = totalEdge[i0]  # 去除重复元素后将顺序复原得到边的约定数据
+cell2edge = j.reshape(-1, NEC)  # (NC, 4)
+
+NE = len(edge)
+edge2cell = np.zeros((NE, 4), dtype=np.int_)
+edge2cell[:, 0] = i0 // NEC
+edge2cell[:, 1] = i1 // NEC
+edge2cell[:, 2] = i0 % NEC
+edge2cell[:, 3] = i1 % NEC
+
+# 输出构造出的edge cell2edge edge2cell
+
+arrayprint("edge", edge)
+arrayprint("edge2cell", edge2cell)
+arrayprint("cell2edge", cell2edge)
+
+fig = plt.figure()
+axes = fig.gca()
+mesh.add_plot(axes)
+mesh.find_node(axes, showindex=True)
+mesh.find_cell(axes, showindex=True)
+mesh.find_edge(axes, showindex=True)
+plt.show()
+\end{python}
+
+\section{数值积分公式}
+
+利用fealpy中数值积分计算函数在区域上的积分，并求和得到在整个区域上的积分。
+
+本次代码实现的数值代数积分函数是$f(x,y)=2(x+y)$，在边长为1的矩形区域上的积分为$\int_0^1\int_0^1 2(x+y)dxdy=2$，那么当分为两个三角形区域时，由于函数的对称性，则在每个区域上的积分为1，经程序验证是一致的，其实现的代码如下：
+
+\begin{python}
+"""
+Notes
+-----
+任给一个或者一组重心坐标点，计算出网格中每个单元上对应的笛卡尔坐标
+并计算函数在区域上的数值积分
+
+(1/3, 1/3, 1/3)   --->  (NC, 2)
+
+"""
+import numpy as np
+from fealpy.mesh import MeshFactory as MF
+import matplotlib.pyplot as plt
+
+box2d = [0, 1, 0, 1]
+mesh = MF.boxmesh2d(box2d, nx=1, ny=1, meshtype='tri')
+NC = mesh.number_of_cells()  # NC=2
+node = mesh.entity('node')
+cell = mesh.entity('cell')  # shape = (NC,3)
+v0 = node[cell[:, 2]] - node[cell[:, 1]]  # (NC,2)
+v1 = node[cell[:, 0]] - node[cell[:, 2]]  # (NC,2)
+v2 = node[cell[:, 1]] - node[cell[:, 0]]  # (NC,2)
+S = 1 / 2 * np.cross(v1, v2)  # nv = np.cross(v2, -v1), shape=(NC,)
+bc = np.array([1 / 3, 1 / 3, 1 / 3], dtype=mesh.ftype)  # 重心坐标
+qf = mesh.integrator(1)  # 一致加密
+bcs, ws = qf.quadpts, qf.weights  # 重心坐标积分点和权重
+ps1 = mesh.bc_to_point(bcs)
+ps = mesh.bc_to_point(bc)
+
+"""
+
+Notes：
+-----
+用高斯积分计算如下的一个简单函数，f(x,y)=2(x+y)
+显然此时该函数在该区域上的积分值为2,一共两个单元，
+故其中每个单元的积分值为1
+
+"""
+
+
+def f(x, y):
+    return 2*(x+y)
+
+
+val = np.zeros((1, NC))
+x = np.zeros((len(ps1)))
+y = np.zeros((len(ps1)))
+valf = np.zeros((len(ps1)))
+
+for i in range(NC):
+    x = ps1[:, i, 0]
+    y = ps1[:, i, 1]
+    valf = f(x, y)
+    val[0, i] = S[i] * ws.reshape(1, -1) @ valf.reshape(-1, 1)
+
+print('各个单元上的积分值:', val)
+print('整个区域上的积分值：', np.sum(val))
+\end{python}
+
+\section{重心坐标}
+
+仿照三角形重心坐标的程序编写四面体重心坐标生成的程序。
+
+理论分析：四面体有四个顶点，对应的坐标分别设为$\pmb{x_0},\pmb{x_1},\pmb{x_2},\pmb{x_3}$，对应的重心坐标函数分别设为$\lambda_0,\lambda_1,\lambda_2,\lambda_3$，设顶点$\pmb{x_0}$对应的面的面积为$S$，该点到对应面的高为$h$，易知此时重心坐标函数$\lambda_0$的梯度方向就是高的方向，设$\pmb{n}$为与高平行的单位方向向量，则可求得方向导数为：
+
+\begin{equation*}
+    \nabla \lambda_0(\pmb{x})\cdot\pmb{n}=\dfrac{1}{h}
+\end{equation*}
+
+上式中的$\dfrac{1}{h}$是由于当$\pmb{x}$在点$\pmb{x_0}$对应的面上时候，$\lambda_0(\pmb{x_0})=0$，当$\pmb{x}$与点$\pmb{x_0}$重合时候有$\lambda(\pmb{x})=1$，他们之间的距离为$h$，故有方向导数的值为$\dfrac{1}{h}$，同事由于$\pmb{n}$是单位向量，那么可得到该梯度的大小也为$\dfrac{1}{h}$，有了梯度的大小和方向，就可以确定梯度形式
+
+\begin{align*}
+    \nabla\lambda_0 = \dfrac{1}{h}\pmb{n} 
+                    =\dfrac{S}{V}\pmb{n}  
+                    =\dfrac{1}{2V}(\pmb{x_3}-\pmb{x_1})\times(\pmb{x_2}-\pmb{x_1})
+\end{align*}
+
+同理可得另外三个重心坐标函数的梯度形式，实现的代码如下：
+
+\begin{python}
+"""
+Notes:
+-----
+仿照三角形求解四面体的重心坐标函数的梯度
+
+"""
+import numpy as np
+from fealpy.mesh import MeshFactory as MF
+
+box3d = [0, 1, 0, 1, 0, 1]
+mesh = MF.boxmesh3d(box3d, nx=1, ny=1, nz=1, meshtype='tet')
+NC = mesh.number_of_cells()
+node = mesh.entity('node')
+cell = mesh.entity('cell')
+v0 = node[cell[:, 0], :] - node[cell[:, 1], :]
+v1 = node[cell[:, 0], :] - node[cell[:, 2], :]
+v2 = node[cell[:, 0], :] - node[cell[:, 3], :]
+v3 = node[cell[:, 2], :] - node[cell[:, 1], :]
+v4 = node[cell[:, 3], :] - node[cell[:, 2], :]
+v5 = node[cell[:, 1], :] - node[cell[:, 3], :]
+mes = np.einsum('ij,ij->i', v1, np.cross(v3, v4))  # 爱因斯坦求和
+Dlambda = np.zeros((NC, 4, 3), dtype=np.float64)
+Dlambda[:, 0, :] = np.cross(v3, v4) / mes.reshape(-1, 1)
+Dlambda[:, 1, :] = np.cross(-v4, v2) / mes.reshape(-1, 1)
+Dlambda[:, 2, :] = np.cross(v2, -v0) / mes.reshape(-1, 1)
+Dlambda[:, 3, :] = np.cross(-v3, v0) / mes.reshape(-1, 1)
+print("Dlambda:", Dlambda)
+\end{python}
+
+\end{document}
