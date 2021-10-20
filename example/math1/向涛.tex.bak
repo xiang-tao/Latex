@@ -39,6 +39,8 @@
 
 用两族平行直线$x=x_j(0,1,\cdots,N)$和$t=t_k(k=0,1,\cdots,M)$将求解区域分割为网格形式，对网格的节点集合我们用如下的记号表示，在二维我们一般用$\Omega$与$\partial\Omega$，在这里我用$\overline{G}$表示整个网格节点，$G_h,\Gamma_h$分别表示网格内部节点和边界节点，用集合来表示就是：
 
+
+
 \begin{equation}
 \left \{
 \begin{aligned}

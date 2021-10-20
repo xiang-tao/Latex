@@ -1,0 +1,142 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}%插入图片的宏包。
+\usepackage{tikz}%画图功能宏包
+\title{CMP模型公式}
+\author{向涛:湘潭大学}
+\date{\today}
+\usepackage{geometry}
+\geometry{left=2cm,right=2cm,top=2cm,bottom=2cm}
+\begin{document}
+\maketitle
+
+\section{不加磁场的公式}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+& \overline{G}=G_h \cup \Gamma_h=\{ (x_j,t_k):0\leq j\leq N;0\leq k \leq M \}　\\
+& G_h = \{ (x_j,t_k):0<j<N;0<k\leq M \} \\
+& \Gamma_h=\{ (x_j,t_k):j=0,N;k=1,\cdots,M \} \cup \{  (x_j,t_0):j=0,\cdots,N \}
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\nabla\cdot\pmb{u} = 0
+\end{equation}
+
+\begin{equation}
+\dfrac{\partial u_1}{\partial x} 
++ \dfrac{\partial u_2}{\partial y} 
++ \dfrac{\partial u_3}{\partial z}=0
+\end{equation}
+
+\begin{equation}
+\rho\dfrac{\partial \pmb{u}}{\partial t}
++ \rho\pmb{u}\cdot\nabla \pmb{u}
+= -\nabla p+ \eta\Delta \pmb{u} +\rho\pmb{F}
+\end{equation}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+\rho \left(\dfrac{\partial u_1}{\partial t}
++u_1 \dfrac{\partial u_1}{\partial x}
++u_2 \dfrac{\partial u_1}{\partial y}
++u_3 \dfrac{\partial u_1}{\partial z}\right)
+= -\dfrac{\partial p}{\partial x} + \eta
+\left( \dfrac{\partial^2 u_1}{\partial x^2} + \dfrac{\partial^2 u_1}{\partial y^2}
++\dfrac{\partial^2 u_1}{\partial z^2}  \right) \\
+\rho \left(\dfrac{\partial u_2}{\partial t}
++u_1 \dfrac{\partial u_2}{\partial x}
++u_2 \dfrac{\partial u_2}{\partial y}
++u_3 \dfrac{\partial u_2}{\partial z}\right)
+= -\dfrac{\partial p}{\partial y} + \eta
+\left( \dfrac{\partial^2 u_2}{\partial x^2} + \dfrac{\partial^2 u_2}{\partial y^2}
++\dfrac{\partial^2 u_2}{\partial z^2}  \right)\\
+\rho \left(\dfrac{\partial u_3}{\partial t}
++u_1 \dfrac{\partial u_3}{\partial x}
++u_2 \dfrac{\partial u_3}{\partial y}
++u_3 \dfrac{\partial u_3}{\partial z}\right)
+= -\dfrac{\partial p}{\partial z} + \eta
+\left( \dfrac{\partial^2 u_3}{\partial x^2} + \dfrac{\partial^2 u_3}{\partial y^2}
++\dfrac{\partial^2 u_3}{\partial z^2}  \right)
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+\dfrac{\partial p}{\partial x}
++\rho u_1 \dfrac{\partial u_1}{\partial x}
++\rho u_2 \dfrac{\partial u_1}{\partial y}
+&= \eta \dfrac{\partial^2 u_1}{\partial z^2} \\
+\dfrac{\partial p}{\partial y}
++\rho u_1 \dfrac{\partial u_2}{\partial x}
++\rho u_2 \dfrac{\partial u_2}{\partial y}
+&= \eta \dfrac{\partial^2 u_2}{\partial z^2}
+\\
+ \dfrac{\partial p}{\partial z} &= 0
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+x=r\cos\theta \\
+y=r\sin\theta \\
+z=z
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+\dfrac{\partial x}{\partial r} = \cos\theta
+~~~ \dfrac{\partial x}{\partial \theta}
+= -r\cdot \sin\theta \\
+\dfrac{\partial y}{\partial r} = \cos\theta
+~~~ \dfrac{\partial y}{\partial \theta}
+= r\cdot \cos\theta
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+\dfrac{\partial r}{\partial x} = \cos\theta
+~~~ \dfrac{\partial \theta}{\partial x}
+= -\dfrac{\sin\theta}{r} \\
+\dfrac{\partial r}{\partial y} = \cos\theta
+~~~ \dfrac{\partial \theta}{\partial y}
+= \dfrac{\cos\theta}{r} 
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\left \{
+\begin{aligned}
+u_1 &= \omega\cdot\cos\theta-u\cdot\sin\theta \\
+u_2 &= \omega\cdot\sin\theta+u\cdot\cos\theta 
+\end{aligned}
+\right.
+\end{equation}
+
+
+
+\section{加磁场后}
+
+
+
+
+
+
+
+
+\end{document}
